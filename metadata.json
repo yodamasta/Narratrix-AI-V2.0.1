@@ -1,0 +1,6 @@
+{
+  "name": "Narratrix-AI V2.0.1",
+  "description": "Narratrix-AI V2.0.1: Votre compagnon créatif pour forger et explorer des univers narratifs complexes. Intègre des outils d'IA (Gemini) pour la génération de contenu, le brainstorming et la visualisation. Nécessite une clé API Gemini.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

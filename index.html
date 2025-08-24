@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Narratrix-AI V2.0.1</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      /* Custom scrollbar for webkit browsers */
+      .scrollbar-thin::-webkit-scrollbar {
+        width: 10px; /* Increased width slightly for button visibility */
+        height: 10px; /* Increased height slightly for button visibility */
+      }
+      .scrollbar-thin::-webkit-scrollbar-track {
+        background: #f1f5f9; /* slate-100 */
+        border-radius: 10px;
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-track {
+        background: #1e293b; /* slate-800 for dark mode track */
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #94a3b8; /* slate-400 */
+        border-radius: 10px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #64748b; /* slate-500 */
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #475569; /* slate-600 for dark mode thumb */
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #334155; /* slate-700 for dark mode thumb hover */
+      }
+
+
+      /* Scrollbar buttons (arrows) for WebKit */
+      .scrollbar-thin::-webkit-scrollbar-button {
+        display: block;
+        background-color: #e2e8f0; /* slate-200 */
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      .scrollbar-thin::-webkit-scrollbar-button:hover {
+        background-color: #cbd5e1; /* slate-300 */
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button {
+        background-color: #334155; /* slate-700 for dark mode */
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button:hover {
+        background-color: #475569; /* slate-600 for dark mode hover */
+      }
+
+      /* Vertical scrollbar buttons */
+      .scrollbar-thin::-webkit-scrollbar-button:vertical {
+        height: 12px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-button:vertical:single-button:start { /* Up arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230d9488'%3e%3cpath d='M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z'/%3e%3c/svg%3e"); /* Teal-600 for arrow */
+        background-size: 10px 10px;
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button:vertical:single-button:start { /* Up arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235eead4'%3e%3cpath d='M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z'/%3e%3c/svg%3e"); /* Teal-300 for arrow in dark mode */
+      }
+      .scrollbar-thin::-webkit-scrollbar-button:vertical:single-button:end { /* Down arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230d9488'%3e%3cpath d='M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z'/%3e%3c/svg%3e"); /* Teal-600 for arrow */
+        background-size: 10px 10px;
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button:vertical:single-button:end { /* Down arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235eead4'%3e%3cpath d='M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z'/%3e%3c/svg%3e"); /* Teal-300 for arrow in dark mode */
+      }
+
+      /* Horizontal scrollbar buttons */
+      .scrollbar-thin::-webkit-scrollbar-button:horizontal {
+        width: 12px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-button:horizontal:single-button:start { /* Left arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230d9488'%3e%3cpath d='M15.41 7.41L10.83 12l4.58 4.59L14 18l-6-6 6-6z'/%3e%3c/svg%3e"); /* Teal-600 for arrow */
+        background-size: 10px 10px;
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button:horizontal:single-button:start { /* Left arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235eead4'%3e%3cpath d='M15.41 7.41L10.83 12l4.58 4.59L14 18l-6-6 6-6z'/%3e%3c/svg%3e"); /* Teal-300 for arrow */
+      }
+      .scrollbar-thin::-webkit-scrollbar-button:horizontal:single-button:end { /* Right arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230d9488'%3e%3cpath d='M8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6-6-6z'/%3e%3c/svg%3e"); /* Teal-600 for arrow */
+        background-size: 10px 10px;
+      }
+      .dark .scrollbar-thin::-webkit-scrollbar-button:horizontal:single-button:end { /* Right arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235eead4'%3e%3cpath d='M8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6-6-6z'/%3e%3c/svg%3e"); /* Teal-300 for arrow */
+      }
+
+      /* For Firefox */
+      .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: #94a3b8 #f1f5f9; /* thumb track */
+      }
+      .dark .scrollbar-thin {
+        scrollbar-color: #475569 #1e293b; /* dark thumb dark track */
+      }
+      
+      /* Base Prose styles using Hex codes */
+      .prose {
+        --tw-prose-body: #334155; /* slate-700 */
+        --tw-prose-headings: #1f2937; /* slate-800 */
+        --tw-prose-lead: #475569; /* slate-600 */
+        --tw-prose-links: #0d9488; /* teal-600 */
+        --tw-prose-bold: #1f2937; /* slate-800 */
+        --tw-prose-counters: #64748b; /* slate-500 */
+        --tw-prose-bullets: #94a3b8; /* slate-400 */
+        --tw-prose-hr: #e2e8f0; /* slate-200 */
+        --tw-prose-quotes: #1f2937; /* slate-800 */
+        --tw-prose-quote-borders: #5eead4; /* teal-300 */
+        --tw-prose-captions: #64748b; /* slate-500 */
+        --tw-prose-code: #0f766e; /* teal-700 */
+        --tw-prose-pre-code: #e2e8f0; /* slate-200 */
+        --tw-prose-pre-bg: #1f2937; /* slate-800 */
+        --tw-prose-th-borders: #cbd5e1; /* slate-300 */
+        --tw-prose-td-borders: #e2e8f0; /* slate-200 */
+      }
+      /* Dark mode prose */
+      .dark .prose {
+        --tw-prose-body: #cbd5e1; /* slate-300 */
+        --tw-prose-headings: #f1f5f9; /* slate-100 */
+        --tw-prose-lead: #94a3b8; /* slate-400 */
+        --tw-prose-links: #2dd4bf; /* teal-400 */
+        --tw-prose-bold: #f1f5f9; /* slate-100 */
+        --tw-prose-counters: #94a3b8; /* slate-400 */
+        --tw-prose-bullets: #64748b; /* slate-500 */
+        --tw-prose-hr: #334155; /* slate-700 */
+        --tw-prose-quotes: #f1f5f9; /* slate-100 */
+        --tw-prose-quote-borders: #14b8a6; /* teal-500 */
+        --tw-prose-captions: #94a3b8; /* slate-400 */
+        --tw-prose-code: #5eead4; /* teal-300 */
+        --tw-prose-pre-code: #334155; /* slate-700 */
+        --tw-prose-pre-bg: #0f172a; /* slate-900 */
+        --tw-prose-th-borders: #475569; /* slate-600 */
+        --tw-prose-td-borders: #334155; /* slate-700 */
+      }
+
+
+      /* Custom styles for Pager content to make text black in light mode */
+      .pager-prose-black {
+        --tw-prose-body: #000000;
+        --tw-prose-headings: #000000;
+        --tw-prose-lead: #000000;
+        /* --tw-prose-links: #1D4ED8; /* Optional: blue-700 for links if distinct */
+        --tw-prose-bold: #000000;
+        --tw-prose-counters: #374151; /* gray-700 */
+        --tw-prose-bullets: #1F2937; /* gray-800 */
+        --tw-prose-hr: #D1D5DB; /* gray-300 */
+        --tw-prose-quotes: #000000;
+        --tw-prose-quote-borders: #9CA3AF; /* gray-400 */
+        --tw-prose-captions: #374151; /* gray-700 */
+      }
+      /* Custom styles for Pager content in dark mode to make text white */
+      .dark .pager-prose-black {
+        --tw-prose-body: #e5e7eb; /* gray-200, suitable for dark background */
+        --tw-prose-headings: #f9fafb; /* gray-50 */
+        --tw-prose-lead: #d1d5db; /* gray-300 */
+        /* --tw-prose-links: #60A5FA; /* Optional: blue-400 for links in dark mode */
+        --tw-prose-bold: #f9fafb; /* gray-50 */
+        --tw-prose-counters: #9ca3af; /* gray-400 */
+        --tw-prose-bullets: #6b7280; /* gray-500 */
+        --tw-prose-hr: #4b5563; /* gray-600 */
+        --tw-prose-quotes: #f9fafb; /* gray-50 */
+        --tw-prose-quote-borders: #6b7280; /* gray-500 */
+        --tw-prose-captions: #9ca3af; /* gray-400 */
+      }
+
+
+      /* Custom styles for vis.js tooltips */
+      .vis-tooltip {
+        position: absolute;
+        visibility: hidden;
+        padding: 8px 12px !important; /* Slightly more padding */
+        white-space: normal !important; /* Allow text wrapping */
+        max-width: 350px !important; /* Max width for readability */
+        font-family: Arial, Helvetica, sans-serif !important; /* Standard font stack */
+        font-size: 13px !important; /* Slightly larger font */
+        line-height: 1.5 !important; /* Better line spacing */
+        color: #f1f5f9 !important; /* slate-100 (Light text) - FORCED */
+        background-color: #1e293b !important; /* slate-800 (Dark background) - FORCED */
+        border: 1px solid #334155 !important; /* slate-700 (Slightly lighter border) */
+        border-radius: 6px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important; /* Softer shadow */
+        z-index: 1070 !important; /* Ensure it's above other elements */
+        pointer-events: none !important; /* Tooltip should not capture mouse events */
+      }
+      /* Optional: Styling for content within the HTML tooltip, if needed */
+      .vis-tooltip strong {
+        color: #93c5fd !important; /* Light blue for strong text for highlight */
+      }
+      .vis-tooltip em {
+        color: #a5b4fc !important; /* Lighter purple for emphasized text */
+      }
+      .vis-tooltip small {
+          color: #94a3b8 !important; /* slate-400 */
+          font-size: 0.8em !important;
+      }
+      .vis-tooltip hr {
+          border-color: #475569 !important; /* slate-600 */
+          margin-top: 6px !important;
+          margin-bottom: 6px !important;
+      }
+
+      /* AnimatedWelcomeBox styles */
+      .animated-welcome-box {
+        position: relative;
+        padding: 3px; /* Border thickness set to 3px */
+        border-radius: 0.75rem; /* rounded-xl */
+        overflow: hidden; /* Important for the pseudo-elements */
+        background-color: #0d9488; /* Dark teal - This is the static border color */
+      }
+
+      .animated-welcome-box::before { 
+        content: '';
+        position: absolute;
+        top: -50%; 
+        left: -50%;
+        width: 200%; 
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          /* Liseré as a thin, solid line (e.g., 5 degrees wide) */
+          #67e8f9 0deg,      /* Bright Cyan-400 for the line */
+          #67e8f9 5deg,      /* End of the bright line */
+          /* Transparent part for the rest of the circle */
+          transparent 5.01deg, /* Immediately transparent after the line */
+          transparent 360deg    /* Transparent for the rest */
+        );
+        animation: rotateBorder 6s linear infinite;
+        z-index: 1; /* Above parent's background, below content */
+      }
+
+      .animated-welcome-box-content {
+        position: relative;
+        z-index: 2; /* Ensure content is above the liseré */
+        background-color: #f0fdfa; /* teal-50 */
+        padding: 1rem; /* p-4 for inner content spacing */
+        border-radius: calc(0.75rem - 3px); /* Parent rounded-xl (0.75rem) - padding (3px) */
+      }
+       /* For dark theme compatibility if the main background turns dark */
+      .dark .animated-welcome-box-content {
+        background-color: #134e4a; /* dark teal-800 */
+        color: #ccfbf1; /* teal-100 for text */
+      }
+      /* Specific overrides for text inside .animated-welcome-box-content in dark mode */
+      .dark .animated-welcome-box-content h1,
+      .dark .animated-welcome-box-content p,
+      .dark .animated-welcome-box-content li,
+      .dark .animated-welcome-box-content strong {
+          color: #ccfbf1; /* teal-100 or a light gray like slate-200 */
+      }
+      .dark .animated-welcome-box-content strong {
+         color: #99f6e4; /* teal-200 or similar brighter for emphasis */
+      }
+
+
+      @keyframes rotateBorder {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-360deg); } /* Counter-clockwise rotation */
+      }
+
+      /* Subtle blink animation for the "Afficher contrôles" button when closed */
+      .animate-subtle-blink {
+        animation: subtleBlink 1.8s infinite alternate ease-in-out;
+      }
+      @keyframes subtleBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+
+      /* Attention blink animation for the "Charger la Bible (Texte Collé)" button */
+      .animate-attention-blink {
+        animation: attentionBlink 1.5s infinite alternate ease-in-out;
+      }
+      @keyframes attentionBlink {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+      }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^0.14.0"
+  }
+}
+</script>
+</head>
+  <body style="background-color: #f1f5f9;">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
